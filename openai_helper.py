@@ -1,34 +1,24 @@
-from dotenv import load_dotenv
+import openai
 import os
-import openai_helper
-import re
+from dotenv import load_dotenv
 
-# Load OpenAI API credentials
+# Load the API key from the .env file
 load_dotenv()
-openai_api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Set the GPT-3.5 Turbo model
-model_engine = "gpt-3.5-turbo"
+# Function to send a message to the OpenAI API and receive a response
+def ask(message):
 
-def generate_text(prompt):
-    try:
-        response = openai_helper.ChatCompletion.create(
-            engine=model_engine,
-            messages=[{"role": "system", "content": "You are a helpful assistant."},
-                      {"role": "user", "content": prompt}],
-            max_tokens=1024,
-            temperature=0.7,
-        )
-        message = response.choices[0].message.text.strip()
-        return message
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
+    # Send the request to the OpenAI API
+    response = openai.ChatCompletion.create(
+        model= "gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": message}
+        ],
+        max_tokens=1024,
+        temperature=0.7,
+    )
 
-def generate_code(prompt):
-    prompt = f"```python\n{prompt}\n```"
-    response = generate_text(prompt)
-    if response:
-        return re.sub("```python\n|```", "", response).strip()
-    else:
-        return None
+    # Return the response
+    return response.choices[0].message.text.strip()
