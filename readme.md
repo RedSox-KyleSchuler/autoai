@@ -1,6 +1,10 @@
 # Self-Regenerating Program
 
 This repository contains code for a self-regenerating program that uses OpenAI's GPT-3 API to generate new code and integrate it into the existing codebase.
+As openai chat api is capable of generating code, my idea is to start with some basic code that can take a simple idea, and ask openAI to generate some code for that idea.
+after that, the base code would take the code that openAI wrote, convert it into actual code, integrate it into the base code, and then rerun itself.
+The code should all be writted in python
+
 
 ## Files
 
