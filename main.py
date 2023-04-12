@@ -2,6 +2,8 @@ import os
 from helper import read_file, write_file
 from openai_helper import ask
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 # Get the current directory and list all the files
 cwd = os.getcwd()
 files = os.listdir(cwd)
