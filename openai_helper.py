@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 import os
-import openai
+import openai_helper
 import re
 
 # Load OpenAI API credentials
@@ -12,7 +12,7 @@ model_engine = "gpt-3.5-turbo"
 
 def generate_text(prompt):
     try:
-        response = openai.ChatCompletion.create(
+        response = openai_helper.ChatCompletion.create(
             engine=model_engine,
             messages=[{"role": "system", "content": "You are a helpful assistant."},
                       {"role": "user", "content": prompt}],
