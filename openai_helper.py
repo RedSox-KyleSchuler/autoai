@@ -21,4 +21,4 @@ def ask(message):
     )
 
     # Return the response
-    return response.choices[0].message.text.strip()
+    return response.choices[0].message.content.strip()
