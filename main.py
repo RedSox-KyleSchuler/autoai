@@ -6,11 +6,11 @@ from openai_helper import ask
 cwd = os.getcwd()
 files = os.listdir(cwd)
 
-# Check if there is a file called "goal.md"
+# Check if there is a file called "goals.md"
 if "goals.md" in files:
-    # Read the contents of the "goal.md" file
+    # Read the contents of the "goals.md" file
     goal = read_file("goals.md")
-    print("Goal:", goal)
+    print("Goals:", goal)
 
     # Ask OpenAI for the next steps based on the current goal
     next_steps = ask(goal)
@@ -24,7 +24,7 @@ if "goals.md" in files:
         new_file = "next_steps.md"
         write_file(new_file, next_steps)
 
-        # Update the "goal.md" file with the completed steps and new goal
+        # Update the "goals.md" file with the completed steps and new goal
         completed_steps = f"- {goal}\n"
         new_goal = f"- {next_steps}"
         write_file("goals.md", completed_steps + new_goal)
@@ -33,7 +33,7 @@ if "goals.md" in files:
         release_notes = f"Added {new_file} with next steps:\n{next_steps}"
         write_file("release_notes.md", release_notes)
 else:
-    # Create a new "goal.md" file
+    # Create a new "goals.md" file
     new_goal = "Learn Python"
     write_file("goals.md", f"- {new_goal}")
 
