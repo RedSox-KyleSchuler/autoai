@@ -1,44 +1,75 @@
 import os
-from helper import read_file, write_file
+from dotenv import load_dotenv
 from openai_helper import ask
+from helper import read_file, write_file
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Get the current directory and list all the files
-cwd = os.getcwd()
-files = os.listdir(cwd)
+def get_changes(prompt):
+    response = ask(prompt)
+    return response.strip()
 
-# Check if there is a file called "goals.md"
-if "goals.md" in files:
-    # Read the contents of the "goals.md" file
-    goal = read_file("goals.md")
-    print("Goals:", goal)
+def update_files():
+    files = [f.lower() for f in os.listdir()]
 
-    # Ask OpenAI for the next steps based on the current goal
-    next_steps = ask(goal)
+    if "goal.md" in files:
+        goal = read_file("goal.md").strip()
+    else:
+        goal = "Create a new project"
+        write_file("goal.md", goal)
 
-    # Print the suggested next steps and ask for confirmation
-    print("Next steps:", next_steps)
-    confirm = input("Do you want to proceed with these steps? (y/n) ")
+    if "readme.md" in files:
+        readme = read_file("readme.md").strip()
+    else:
+        readme = ""
+        write_file("readme.md", "")
 
-    if confirm.lower() == "y":
-        # Create a new file for the next steps
-        new_file = "next_steps.md"
-        write_file(new_file, next_steps)
+    if "repo.md" in files:
+        repo = read_file("repo.md").strip()
+    else:
+        repo = ""
 
-        # Update the "goals.md" file with the completed steps and new goal
-        completed_steps = f"- {goal}\n"
-        new_goal = f"- {next_steps}"
-        write_file("goals.md", completed_steps + new_goal)
+    prompt = f"""
+    Access the GitHub repository from {repo}.
+    Look at the readme.md file for assistance in interpreting the relationship of the files.
+    Check the goal.md file to determine the next steps.
+    Recommend specific file-level changes to one of the files, or to create a new file for the repository.
+    Also, specify changes to be made to the goal.md and readme.md files to reflect the changes.
 
-        # Update the "release_notes.md" file with the changes
-        release_notes = f"Added {new_file} with next steps:\n{next_steps}"
-        write_file("release_notes.md", release_notes)
-else:
-    # Create a new "goals.md" file
-    new_goal = "Learn Python"
-    write_file("goals.md", f"- {new_goal}")
+    Please be specific with your changes and provide context in the release_notes.md file.
+    If a new Python file should be created, or an existing Python file edited, please specify the filename and what the file should be comprised of.
 
-    # Update the "release_notes.md" file with the changes
-    release_notes = f"Created new file: goals.md with goal: {new_goal}"
-    write_file("release_notes.md", release_notes)
+    Update the release_notes.md file with the changes made.
+
+    """
+    changes = get_changes(prompt)
+
+    # Implement the logic for updating files, goal.md, readme.md, and release_notes.md
+    change_lines = changes.split("\n")
+    release_notes = ""
+
+    for line in change_lines:
+        if line.startswith("# Update goal.md"):
+            goal = line.split(":")[-1].strip()
+            write_file("goal.md", goal)
+        elif line.startswith("# Update readme.md"):
+            readme = line.split(":")[-1].strip()
+            write_file("readme.md", readme)
+        elif line.startswith("# Add to release_notes.md"):
+            release_notes += line.split(":")[-1].strip() + "\n"
+
+    if release_notes:
+        if "release_notes.md" in files:
+            with open("release_notes.md", "a") as notes_file:
+                notes_file.write("\n\n")
+                notes_file.write(release_notes)
+        else:
+            with open("release_notes.md", "w") as notes_file:
+                notes_file.write("# Release Notes\n\n")
+                notes_file.write(release_notes)
+
+    print("All changes made successfully!")
+
+if __name__ == "__main__":
+    update_files()
