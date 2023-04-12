@@ -1,5 +1,7 @@
 # Goals
 
+
+- [ ] Update the code to adjust the prompt to read the files, and if the readme is not up to date, to adjust the readme with the newly found files and their purpose
 - [ ] Update the code to adjust the prompt to suggest 1 specific change at a time, after looking at all the goals, and any other changes that might be recommended, to add them to the goals, as long as they don't conflict with the other goals, or are not duplicates
 - [ ] Update the code to ask for a user to approve a code push, and after approval, push the code to github using git, wait for it to be updated, and then rerun the whole process
 - [ ] Develop a system to automatically generate and improve code based on user input and interactions with the OpenAI API
