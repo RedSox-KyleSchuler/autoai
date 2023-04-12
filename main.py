@@ -1,10 +1,6 @@
 import os
-from dotenv import load_dotenv
 from openai_helper import ask
 from helper import read_file, write_file
-
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def get_changes(prompt):
     response = ask(prompt)
@@ -13,11 +9,11 @@ def get_changes(prompt):
 def update_files():
     files = [f.lower() for f in os.listdir()]
 
-    if "goal.md" in files:
-        goal = read_file("goal.md").strip()
+    if "goals.md" in files:
+        goal = read_file("goals.md").strip()
     else:
         goal = "Create a new project"
-        write_file("goal.md", goal)
+        write_file("goals.md", goal)
 
     if "readme.md" in files:
         readme = read_file("readme.md").strip()
@@ -33,9 +29,9 @@ def update_files():
     prompt = f"""
     Access the GitHub repository from {repo}.
     Look at the readme.md file for assistance in interpreting the relationship of the files.
-    Check the goal.md file to determine the next steps.
+    Check the goals.md file to determine the next steps.
     Recommend specific file-level changes to one of the files, or to create a new file for the repository.
-    Also, specify changes to be made to the goal.md and readme.md files to reflect the changes.
+    Also, specify changes to be made to the goals.md and readme.md files to reflect the changes.
 
     Please be specific with your changes and provide context in the release_notes.md file.
     If a new Python file should be created, or an existing Python file edited, please specify the filename and what the file should be comprised of.
@@ -45,14 +41,14 @@ def update_files():
     """
     changes = get_changes(prompt)
 
-    # Implement the logic for updating files, goal.md, readme.md, and release_notes.md
+    # Implement the logic for updating files, goals.md, readme.md, and release_notes.md
     change_lines = changes.split("\n")
     release_notes = ""
 
     for line in change_lines:
-        if line.startswith("# Update goal.md"):
+        if line.startswith("# Update goals.md"):
             goal = line.split(":")[-1].strip()
-            write_file("goal.md", goal)
+            write_file("goals.md", goal)
         elif line.startswith("# Update readme.md"):
             readme = line.split(":")[-1].strip()
             write_file("readme.md", readme)
